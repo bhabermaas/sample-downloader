@@ -3,32 +3,32 @@
 package main
 
 import (
-	"log"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"github.com/wercker/ocidownload/downloadserver"
+	"github.com/wercker/pkg/log"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
-// This module is a test module for the download feature. It simply checks for signals and starts the
-// POST download server
+// This module provides the shell to run the artifact download server as a separate
+// executable for the purpose of handing unmanaged runner artifact downloads.
 func main() {
+	app := cli.NewApp()
 
-	signalChannel := make(chan os.Signal, 2)
-	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		sig := <-signalChannel
-		switch sig {
-		case os.Interrupt:
-			//handle SIGINT
-			log.Fatal("SIGINT interrupt")
-		case syscall.SIGTERM:
-			//handle SIGTERM
-			log.Fatal("SIGTERM interrupt")
-		}
-	}()
-	go downloadserver.OCIdownloadServer(8080)
-	time.Sleep(time.Hour * 24)
+	app.Name = "ocidownload"
+	app.Copyright = "Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved."
+	app.Usage = "Handle processing of artifact downloads"
+
+	app.Version = Version()
+	app.Compiled = CompiledAt()
+	app.Before = log.SetupLogging
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:  "debug",
+			Usage: "Enable debug logging",
+		},
+	}
+	app.Commands = []cli.Command{
+		serverCommand,
+	}
+	app.Run(os.Args)
 }

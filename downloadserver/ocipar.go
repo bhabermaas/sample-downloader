@@ -14,11 +14,11 @@ import (
 // CreateOCIPAR creates a pre-authenticated URL for a download artifact from
 // OCI Object Storage. This handler will also delete expired PARs as a
 // housekeeping function.
-func (ds *DownloadServer) CreateOCIPAR(parname string, artifact string, fingerprint string, privatekey string, phrase string) (string, error) {
+func (ds *DownloadServer) CreateOCIPAR(parname string, artifact string) (string, error) {
 	ctx := context.Background()
 	// Create the configuration
 	configProvider := ocicommon.NewRawConfigurationProvider(ds.Tenancy,
-		ds.User, ds.Region, fingerprint, privatekey, &phrase)
+		ds.User, ds.Region, ds.Fingerprint, ds.Privatekey, &ds.Passphrase)
 
 	// Create the object storage client
 	client, err := ocistorage.NewObjectStorageClientWithConfigurationProvider(configProvider)
@@ -52,7 +52,7 @@ func (ds *DownloadServer) CreateOCIPAR(parname string, artifact string, fingerpr
 
 	// Specify 5 minutes to live
 	expires := ocicommon.SDKTime{
-		time.Now().Add(time.Minute * 5),
+		time.Now().Add(time.Minute * 2),
 	}
 
 	// Setup the creation details

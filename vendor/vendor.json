@@ -1,6 +1,49 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"package": [],
+	"package": [
+		{
+			"checksumSHA1": "r6ZMyP/HsdeToXIxvgP3ntL6Bds=",
+			"path": "github.com/konsorten/go-windows-terminal-sequences",
+			"revision": "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242",
+			"revisionTime": "2018-10-04T22:41:46Z"
+		},
+		{
+			"checksumSHA1": "RWTKDUaawo4OOfExRtnG/YNKtxM=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "91da99df23e3bad7f384338a5a8f636d04093d9a",
+			"revisionTime": "2018-11-16T13:29:20Z"
+		},
+		{
+			"checksumSHA1": "ktvJJdUEsI6l541flI7AX9BhL08=",
+			"path": "github.com/wercker/pkg/log",
+			"revision": "5ec3a3613ca8834027f60d2a5e2511a4c14e8e4b",
+			"revisionTime": "2018-09-04T12:40:44Z"
+		},
+		{
+			"checksumSHA1": "BGm8lKZmvJbf/YOJLeL1rw2WVjA=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "3d3f9f413869b949e48070b5bc593aa22cc2b8f2",
+			"revisionTime": "2018-11-10T06:03:37Z"
+		},
+		{
+			"checksumSHA1": "Tr5yx/ucT6KllmNwUIRQUweZhWI=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "ec83556a53fe16b65c452a104ea9d1e86a671852",
+			"revisionTime": "2018-11-19T19:44:06Z"
+		},
+		{
+			"checksumSHA1": "Y7nctMxT58lRM78VtElPerhcnEs=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "ec83556a53fe16b65c452a104ea9d1e86a671852",
+			"revisionTime": "2018-11-19T19:44:06Z"
+		},
+		{
+			"checksumSHA1": "Yx1MU40fyGe7hhqW9+dkv8kXa60=",
+			"path": "gopkg.in/urfave/cli.v1",
+			"revision": "cfb38830724cc34fedffe9a2a29fb54fa9169cd1",
+			"revisionTime": "2017-08-11T01:42:03Z"
+		}
+	],
 	"rootPath": "github.com/wercker/ocidownload"
 }
