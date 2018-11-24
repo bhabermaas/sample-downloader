@@ -35,11 +35,14 @@ type DownloadServer struct {
 	BucketName  string
 }
 
+var downloadServer *DownloadServer
+
 // NewDispatchServer creates a DispatchServer
 func NewDownloadServer() *DownloadServer {
-	downloadServer := &DownloadServer{}
-	downloadServer.getOCICredentials()
-	return downloadServer
+	server := &DownloadServer{}
+	server.getOCICredentials()
+	downloadServer = server
+	return server
 }
 
 // Fill DownloadServer with OCI credentials
@@ -96,7 +99,6 @@ func download(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	downloadServer := NewDownloadServer()
 	artifact := parms["a"]
 	storepath := parms["s"]
 
@@ -104,6 +106,7 @@ func download(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing artifact a=", http.StatusBadRequest)
 	}
 	if len(storepath) > 0 {
+		// Storepath is present so handle local file system download
 		err := downloadServer.streamTheArtifact(w, r, artifact[0], storepath[0])
 		if err != nil {
 			msg := fmt.Sprintf("%s", err)

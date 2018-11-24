@@ -15,7 +15,7 @@ import (
 
 var serverCommand = cli.Command{
 	Name:   "server",
-	Usage:  "start download server",
+	Usage:  "start artifact download server",
 	Action: serverAction,
 	Flags:  append(serverFlags),
 }
@@ -49,6 +49,11 @@ var serverAction = func(c *cli.Context) error {
 			log.Fatal(msg)
 		}
 	}()
+
+	// Note: DownloadServer structure is populated with OCI credentials taken from the
+	// environment. If these are coming from somewhere else then tjhey needc to be supplied
+	// after the structure is returned.
+	downloadserver.NewDownloadServer()
 	log.Info("Starting artifact download server")
 	downloadserver.OCIdownloadServer(o.Port)
 	return nil
