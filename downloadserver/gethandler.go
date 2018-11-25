@@ -159,7 +159,7 @@ func download(w http.ResponseWriter, r *http.Request) {
 	_, err = io.Copy(w, stream.Body)
 	if err != nil {
 		errstr := fmt.Sprintf("%s", err)
-		http.Error(w, errstr, 500)
+		log.Error(errstr)
 		return
 	}
 	msg := fmt.Sprintf("OCI download (%s bytes) - %s", stream.Header.Get("Content-Length"), artifact[0])
@@ -186,7 +186,9 @@ func (ds *DownloadServer) streamTheArtifact(w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size()))
 	_, err = io.Copy(w, f)
 	if err != nil {
-		return err
+		errstr := fmt.Sprintf("%s", err)
+		log.Error(errstr)
+		return nil
 	}
 	msg := fmt.Sprintf("File download (%d bytes) - %s", stat.Size(), artifact)
 	log.Info(msg)
