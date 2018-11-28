@@ -75,7 +75,7 @@ func (ds *DownloadServer) CreateOCIPAR(parname string, artifact string) (string,
 	}
 	par := fmt.Sprintf("https://%s%s", client.BaseClient.Host, *response.AccessUri)
 	if ds.Debug {
-		log.Debug(fmt.Sprintf("OCI PAR is %s", par))
+		log.Debugln(fmt.Sprintf("OCI PAR is %s", par))
 	}
 	return par, nil
 }
