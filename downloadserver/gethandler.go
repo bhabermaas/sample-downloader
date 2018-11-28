@@ -33,6 +33,7 @@ type DownloadServer struct {
 	Passphrase  string
 	Namespace   string
 	BucketName  string
+	Debug       bool
 }
 
 var downloadServer *DownloadServer
@@ -112,6 +113,7 @@ func download(w http.ResponseWriter, r *http.Request) {
 			msg := fmt.Sprintf("%s", err)
 			http.Error(w, msg, 500)
 		}
+		r.Body.Close()
 		return
 	}
 
@@ -125,6 +127,17 @@ func download(w http.ResponseWriter, r *http.Request) {
 	if tenancy[0] != downloadServer.Tenancy {
 		http.Error(w, "wrong tenancy", http.StatusForbidden)
 		return
+	}
+
+	// Strip off environment specific prefixes. OCI objects are store without these.
+	artstr := artifact[0]
+	prefixStaging := "wercker-development/"
+	if strings.HasPrefix(artstr, prefixStaging) {
+		artifact[0] = artstr[len(prefixStaging):]
+	}
+	prefixProduction := "wercker-production/"
+	if strings.HasPrefix(artstr, prefixProduction) {
+		artifact[0] = artstr[len(prefixProduction):]
 	}
 
 	// Get the PAR for this download.
@@ -156,14 +169,20 @@ func download(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "binary/octet-stream")
 	w.Header().Set("Accept-Ranges", "bytes")
 	w.Header().Set("Content-Length", stream.Header.Get("Content-Length"))
-	_, err = io.Copy(w, stream.Body)
+	nbytes, err := io.Copy(w, stream.Body)
 	if err != nil {
-		errstr := fmt.Sprintf("%s", err)
-		log.Error(errstr)
+		if downloadServer.Debug {
+			// See broken pipe messages
+			errstr := fmt.Sprintf("%s", err)
+			log.Error(errstr)
+		}
 		return
 	}
-	msg := fmt.Sprintf("OCI download (%s bytes) - %s", stream.Header.Get("Content-Length"), artifact[0])
-	log.Info(msg)
+	if downloadServer.Debug {
+		msg := fmt.Sprintf("OCI download complete (%d bytes) - %s", nbytes, artifact[0])
+		log.Debugln(msg)
+	}
+	r.Body.Close()
 }
 
 // Stream the artifact from the local file system back to the web-api where it is
@@ -171,6 +190,9 @@ func download(w http.ResponseWriter, r *http.Request) {
 // the optional download service (this component) ties to the runner.
 func (ds *DownloadServer) streamTheArtifact(w http.ResponseWriter, r *http.Request, artifact string, storepath string) error {
 	artifactPath := fmt.Sprintf("%s/%s", storepath, artifact)
+	if ds.Debug {
+		log.Debugln(fmt.Sprintf("Downloading local file from %s", artifactPath))
+	}
 	f, err := os.Open(artifactPath)
 	if err != nil {
 		return err
@@ -184,13 +206,18 @@ func (ds *DownloadServer) streamTheArtifact(w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Accept-Ranges", "bytes")
 	stat, err := f.Stat()
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size()))
-	_, err = io.Copy(w, f)
+	nbytes, err := io.Copy(w, f)
 	if err != nil {
-		errstr := fmt.Sprintf("%s", err)
-		log.Error(errstr)
+		if ds.Debug {
+			// See broken pipe signals
+			errstr := fmt.Sprintf("%s", err)
+			log.Error(errstr)
+		}
 		return nil
 	}
-	msg := fmt.Sprintf("File download (%d bytes) - %s", stat.Size(), artifact)
-	log.Info(msg)
+	if ds.Debug {
+		msg := fmt.Sprintf("Local File download complete (%d bytes) - %s", nbytes, artifact)
+		log.Debugln(msg)
+	}
 	return nil
 }

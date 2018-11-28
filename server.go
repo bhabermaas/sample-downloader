@@ -35,7 +35,7 @@ var serverAction = func(c *cli.Context) error {
 		return err
 	}
 
-	msg := "Server interrupted and terminated"
+	msg := "Interrupted artifact download server and terminated"
 	signalChannel := make(chan os.Signal, 2)
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
 	go func() {
@@ -53,23 +53,27 @@ var serverAction = func(c *cli.Context) error {
 	// Note: DownloadServer structure is populated with OCI credentials taken from the
 	// environment. If these are coming from somewhere else then tjhey needc to be supplied
 	// after the structure is returned.
-	downloadserver.NewDownloadServer()
-	log.Info("Starting artifact download server")
+	ds := downloadserver.NewDownloadServer()
+	ds.Debug = o.Debug
+	log.Info(fmt.Sprintf("Starting artifact download server, listening on port %d", o.Port))
 	downloadserver.OCIdownloadServer(o.Port)
 	return nil
 }
 
 type serverOptions struct {
-	Port int
+	Port  int
+	Debug bool
 }
 
 func parseServerOptions(c *cli.Context) (*serverOptions, error) {
+	debug := c.GlobalBool("debug")
 	port := c.Int("port")
 	if !validPortNumber(port) {
 		return nil, fmt.Errorf("invalid port number: %d", port)
 	}
 	return &serverOptions{
-		Port: port,
+		Port:  port,
+		Debug: debug,
 	}, nil
 }
 

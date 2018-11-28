@@ -8,6 +8,7 @@ import (
 
 	ocicommon "github.com/oracle/oci-go-sdk/common"
 	ocistorage "github.com/oracle/oci-go-sdk/objectstorage"
+	"github.com/wercker/pkg/log"
 	"golang.org/x/net/context"
 )
 
@@ -73,5 +74,8 @@ func (ds *DownloadServer) CreateOCIPAR(parname string, artifact string) (string,
 		return "", err
 	}
 	par := fmt.Sprintf("https://%s%s", client.BaseClient.Host, *response.AccessUri)
+	if ds.Debug {
+		log.Debug(fmt.Sprintf("OCI PAR is %s", par))
+	}
 	return par, nil
 }
