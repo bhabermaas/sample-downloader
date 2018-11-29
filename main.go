@@ -14,9 +14,9 @@ import (
 func main() {
 	app := cli.NewApp()
 
-	app.Name = "ocidownload"
+	app.Name = "runner-download"
 	app.Copyright = "Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved."
-	app.Usage = "Handle processing of artifact downloads"
+	app.Usage = "Handle processing of artifact downloads for managed/unmanaged runners"
 
 	app.Version = Version()
 	app.Compiled = CompiledAt()

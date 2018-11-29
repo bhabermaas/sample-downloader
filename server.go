@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/wercker/ocidownload/downloadserver"
+	"github.com/wercker/runner-download/downloadserver"
 	"github.com/wercker/pkg/log"
 	cli "gopkg.in/urfave/cli.v1"
 )
