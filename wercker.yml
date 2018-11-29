@@ -1,31 +1,45 @@
-box: golang:1.9
+# This references the default golang container from
+# the Docker Hub: https://registry.hub.docker.com/u/library/golang/
+# If you want Google's container you would reference google/golang
+# Read more about containers on our dev center
+# https://devcenter.wercker.com/overview-and-core-concepts/containers/
+box: golang
+# This is the build pipeline. Pipelines are the core of wercker
+# Read more about pipelines on our dev center
+# https://devcenter.wercker.com/development/pipelines/
+
+# You can also use services such as databases. Read more on our dev center:
+# https://devcenter.wercker.com/administration/services/
+# services:
+    # - postgres
+    # https://devcenter.wercker.com/administration/services/examples/postgresql/
+
+    # - mongo
+    # https://devcenter.wercker.com/administration/services/examples/mongodb/
 build:
-  base-path: /go/src/github.com/wercker/runner-download
+  # The steps that will be executed on build
+  # Steps make up the actions in your pipeline
+  # Read more about steps on our dev center:
+  # https://devcenter.wercker.com/development/steps/
   steps:
+    # Sets the go workspace and places you package
+    # at the right place in the workspace tree
+    - setup-go-workspace
 
+    # Gets the dependencies
     - script:
-        name: install govendor
-        code: go get -u github.com/kardianos/govendor
-
-    - script:
-        name: go vet
-        code: govendor vet +local
-
-    - script:
-        name: install dependencies
+        name: go get
         code: |
-          govendor sync
+          go get
 
-    - script:
-        name: go test
-        code: CGO_ENABLED=0 govendor test $(go list ./... | grep -v rest)
-
+    # Build the project
     - script:
         name: go build
         code: |
-          CGO_ENABLED=0 \
-            go build \
-            -ldflags="-s -X main.GitCommit=$WERCKER_GIT_COMMIT -X main.PatchVersion=$(( ($(date +%s) - $(date --date=20150101 +%s) )/(60*60*24) )) -X main.Compiled=$(date +%s)" \
-            -installsuffix cgo \
-            -o "$WERCKER_OUTPUT_DIR/runner-download"
-          cp -r "$WERCKER_OUTPUT_DIR/runner-download" "$WERCKER_REPORT_ARTIFACTS_DIR"
+          go build ./...
+
+    # Test the project
+    - script:
+        name: go test
+        code: |
+          go test ./...
