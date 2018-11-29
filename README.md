@@ -1,4 +1,4 @@
-# runner-download
+# RUNNER-DOWNLOAD
 artifact downloader for runners
 
 This service is provided for runners (unmanaged or managed) to handle artifact downloads
