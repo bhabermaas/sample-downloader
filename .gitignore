@@ -1,0 +1,8 @@
+ocidownload
+ocidownload_*
+.wercker
+ENVIRONMENT
+.vscode/**
+vendor/**
+!vendor/vendor.json
+.idea/
