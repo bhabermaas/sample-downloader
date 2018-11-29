@@ -1,31 +1,31 @@
-# This references the default golang container from
-box: golang
-# This is the build pipeline. Pipelines are the core of wercker
-
+box: golang:1.9
 build:
-  # The steps that will be executed on build
-  # Steps make up the actions in your pipeline
-  # Read more about steps on our dev center:
-  # https://devcenter.wercker.com/development/steps/
+  base-path: /go/src/github.com/wercker/runner-download
   steps:
-    # Sets the go workspace and places you package
-    # at the right place in the workspace tree
-    - setup-go-workspace
 
-    # Gets the dependencies
     - script:
-        name: go get
-        code: |
-          go get
+        name: install govendor
+        code: go get -u github.com/kardianos/govendor
 
-    # Build the project
+    - script:
+        name: go vet
+        code: govendor vet +local
+
+    - script:
+        name: install dependencies
+        code: |
+          govendor sync
+
+    - script:
+        name: go test
+        code: CGO_ENABLED=0 govendor test $(go list ./... | grep -v rest)
+
     - script:
         name: go build
         code: |
-          go build ./...
-
-    # Test the project
-    - script:
-        name: go test
-        code: |
-          go test ./...
+          CGO_ENABLED=0 \
+            go build \
+            -ldflags="-s -X main.GitCommit=$WERCKER_GIT_COMMIT -X main.PatchVersion=$(( ($(date +%s) - $(date --date=20150101 +%s) )/(60*60*24) )) -X main.Compiled=$(date +%s)" \
+            -installsuffix cgo \
+            -o "$WERCKER_OUTPUT_DIR/runner-download"
+          cp -r "$WERCKER_OUTPUT_DIR/runner-download" "$WERCKER_REPORT_ARTIFACTS_DIR"
