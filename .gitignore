@@ -1,5 +1,5 @@
-ocidownload
-ocidownload_*
+runner-download
+runner-download_*
 .wercker
 ENVIRONMENT
 .vscode/**
