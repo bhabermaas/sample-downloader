@@ -1,2 +1,2 @@
-# sample-downloader
-Sample downloader for runners
+# runner-downloader
+artifact downloader for runners
