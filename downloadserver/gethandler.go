@@ -52,7 +52,7 @@ func (ds *DownloadServer) getOCICredentials() {
 	ds.User = os.Getenv("WERCKER_OCI_USER_OCID")
 	ds.Region = os.Getenv("WERCKER_OCI_REGION")
 	ds.Privatekey = os.Getenv("WERCKER_OCI_PRIVATE_KEY")
-	if ds.Privatekey == "" {
+	if ds.Privatekey == "" && ds.Tenancy != "" {
 		keyfile := os.Getenv("WERCKER_OCI_PRIVATE_KEY_PATH")
 		filekey, err := ioutil.ReadFile(keyfile)
 		if err != nil {
