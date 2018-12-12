@@ -9,6 +9,18 @@
 			"revisionTime": "2018-10-04T22:41:46Z"
 		},
 		{
+			"checksumSHA1": "VQzhM7rDwvNNHINxtCQXCid9vXw=",
+			"path": "github.com/oracle/oci-go-sdk/common",
+			"revision": "45c946f6e201a4209a15a6d33d23a1d446efd621",
+			"revisionTime": "2018-11-29T19:57:16Z"
+		},
+		{
+			"checksumSHA1": "eY0e2Hs2A4YHj5FTJvsMPaGxIQ4=",
+			"path": "github.com/oracle/oci-go-sdk/objectstorage",
+			"revision": "45c946f6e201a4209a15a6d33d23a1d446efd621",
+			"revisionTime": "2018-11-29T19:57:16Z"
+		},
+		{
 			"checksumSHA1": "RWTKDUaawo4OOfExRtnG/YNKtxM=",
 			"path": "github.com/sirupsen/logrus",
 			"revision": "91da99df23e3bad7f384338a5a8f636d04093d9a",
@@ -25,6 +37,12 @@
 			"path": "golang.org/x/crypto/ssh/terminal",
 			"revision": "3d3f9f413869b949e48070b5bc593aa22cc2b8f2",
 			"revisionTime": "2018-11-10T06:03:37Z"
+		},
+		{
+			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
+			"path": "golang.org/x/net/context",
+			"revision": "610586996380ceef02dd726cc09df7e00a3f8e56",
+			"revisionTime": "2018-12-07T14:56:26Z"
 		},
 		{
 			"checksumSHA1": "Tr5yx/ucT6KllmNwUIRQUweZhWI=",
@@ -45,5 +63,5 @@
 			"revisionTime": "2017-08-11T01:42:03Z"
 		}
 	],
-	"rootPath": "github.com/wercker/ocidownload"
+	"rootPath": "github.com/wercker/runner-download"
 }
