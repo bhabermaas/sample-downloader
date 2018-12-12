@@ -29,3 +29,18 @@ build:
             -installsuffix cgo \
             -o "$WERCKER_OUTPUT_DIR/runner-download"
           cp -r "$WERCKER_OUTPUT_DIR/runner-download" "$WERCKER_REPORT_ARTIFACTS_DIR"
+
+push-runner-download-to-ocir:
+  box:
+      id: oraclelinux
+      tag: 7-slim
+      - script:
+         name: move runner-download
+         code: mv runner-download /runner-download
+      - internal/docker-push:
+          username: $OCI_USERNAME
+          password: $OCI_PASSWORD
+          repository: iad.ocir.io/odx-pipelines/wercker/runner-download
+          tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+          ports: 1300
+    

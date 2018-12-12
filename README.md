@@ -13,8 +13,9 @@ Regardless of runner type, it is invoked by a redirect to the URL derived from t
 information by the Web-API local_modules/api-runsteps/get-runStep-artifact.js 
 
 For OCI storage, the operating environment must be setup with all the required OCI information
-and credentials. No sensitive information is passed over the wire. The following environment
-properties must be established before running this program: 
+and credentials. No sensitive information is passed over the wire. All necessary credentials are 
+supplied to this program and not passed during the redirect.  
+The following environment properties must be established before running this program: 
 
    WERCKER_OCI_TENANCY_OCID
    WERCKER_OCI_USER_OCID
@@ -30,29 +31,33 @@ Execution as a command for an unmanaged runner
 
 The command is invoked on the same host system as the Wercker CLI runner start is issued when the
 local file system is used as persistant storage for the pipeline data. The Wercker CLI runner start 
-command must provide the --oci-download option containing the URL used by the Wercker Web UI to start 
-unmanaged runners (i.e  --oci-download=http://<hostname or ip>:<port number> ). The choice of port number
-is optional and defaults to port 8091 when the runner-download command is executed.  
+command must provide the --oci-download option containing the URL to be used by the Wercker Web UI
+ (i.e  --oci-download=http://<hostname or ip>:<port number> ). The choice of port number
+is optional and defaults to port 8091 when omittted from the  runner-download command.  
 
 runner-download [--debug] server [--port=8091] 
 
-The Wercker Web UI must be able to redirect to the runner-download command from the Internet. For this to
-work it is necessary to setup suitable routing and/or open the chosen port number through your router. Artifacts
-can only be downloaded provided the runner-command is running and accessible. 
+The --debug option, when included, will log every download request in the log.
 
-When using OCI Object Storage for the persistant storage medium, it is not necesdsary to run the service on
-the same host computer where the unmanaged runner is executing. For this type of configuration, the
+The Wercker Web UI must be able to redirect to the runner-download program from the Internet. For this to
+work it is necessary to setup suitable routing and/or open the chosen port number through your router. Artifacts
+can only be downloaded when the runner-download is running and accessible. 
+
+When using OCI Object Storage for the persistant storage medium, it is not necessary to run the service on
+the same host computer where the unmanaged runners are executing. For this type of configuration, the
 runner-download can run anywhere that has access to the OCI Object Storage service and can be accessed as
 described earlier. 
 
 Execution as a Kubernetes or OKE Service
 ----------------------------------------
 
-The runner-download command runs within a container managed by the Kubernetres or OKE system. This type of 
-configuration is a more complicated setup and is intended ONLY for pipeline information persisted to OCI
-object storage. 
+The runner-download command runs within a container managed by Kubernetres or the OKE system. This type of 
+configuration is a more complicated setup and is intended ONLY for pipeline information persisted to the OCI
+Object Storage service. This configuration is meant to compliment managed runners controlled by the 
+Wercker Operator. The same secrets used to configure the Wercker Operator must be used for this deployment.
 
-1. Create a secret which contains all the OCI Object Storage access information and credentials. 
+1. Create a secret which contains all the OCI Object Storage access information and credentials. The secrets 
+   already created for the Wercker Operator can be used in lieu of defining as described here. 
 
    kubectl create secret generic ocisecrets \
    --from-literal tenancy=<oci tenancy> \
@@ -62,12 +67,12 @@ object storage.
    --from-literal bucket=<bucket-name> \
    --from-literal region=<region> \
    --from-literal passphrase=<passphrase> \
-   --from-file api-key=/Users/bihaber/.oci/oci_api_key.pem
+   --from-file <path to api_key.pem>
 
-   Note: The secret names must coincide with the secrets mapping to environment variables in the deployment.
+   Note: The secret key names must coincide with the secrets mapping to environment variables in the deployment.
 
-2. Create a deployment to run the runner-download Docker image inside a Pod. This deployment requires   
-requires more setup  
+2. Create a deployment to run the runner-download Docker image inside a Pod. The example deployment shown below 
+   will start the runner-download application and service. 
 
   apiVersion: extensions/v1beta1
   kind: Deployment
@@ -163,3 +168,6 @@ requires more setup
     selector:
        app: runner-download
 
+3. Setup network access for the runner-dowkload service. For a single replica this can be easily accomodated by setting up
+   port forwarding. When more than one replica is desired, it is necessary to create an ingress service to send the
+   download recdirect requests into the service. 
