@@ -34,6 +34,7 @@ push-runner-download-to-ocir:
   box:
       id: oraclelinux
       tag: 7-slim
+      steps:
       - script:
          name: move runner-download
          code: mv runner-download /runner-download
