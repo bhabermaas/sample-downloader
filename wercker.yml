@@ -46,4 +46,3 @@ push-runner-download-to-ocir:
          repository: iad.ocir.io/odx-pipelines/wercker/runner-download
          registry: https://iad.ocir.io/v2
          tag: latest, $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-         labels: $WERCKER_GIT_BRANCH
