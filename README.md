@@ -29,15 +29,22 @@ The following environment properties must be established before running this pro
 Execution as a command for an unmanaged runner
 ---------------------------------------------
 
-The command is invoked on the same host system as the Wercker CLI runner start is issued when the
-local file system is used as persistant storage for the pipeline data. The Wercker CLI runner start 
-command must provide the --oci-download option containing the URL to be used by the Wercker Web UI
- (i.e  --oci-download=http://<hostname or ip>:<port number> ). The choice of port number
+The command is executed by running the runner-download Docker image on the same host system as the Wercker CLI runner start command. This is necessary when the local file system is used as persistant storage for the pipeline data. The Wercker CLI runner start command must include the --oci-download option containing the URL to be used by the Wercker Web UI (i.e  --oci-download=http://<hostname or ip>:<port number> ). The choice of port number
 is optional and defaults to port 8091 when omittted from the  runner-download command.  
 
-runner-download [--debug] server [--port=8091] 
+First pull the latest Docker image for the runner-download service - 
+   
+   docker pull iad.ocir.io/odx-pipelines/wercker/runner-download:latest
 
-The --debug option, when included, will log every download request in the log.
+Then run the image in a Docker container -
+   
+   docker run -it --rm -p 8091:8091 iad.ocir.io/odx-pipelines/wercker/runner-download:latest /runner-download --debug server
+
+The --debug option, when included, will log every download request in the log. The desired port number is specified
+with the Docker -p option and the --port= parameter on the command. 
+
+Example 
+   docker run -it --rm -p 13005:13005 iad.ocir.io/odx-pipelines/wercker/runner-download:latest /runner-download --debug server --port=13005
 
 The Wercker Web UI must be able to redirect to the runner-download program from the Internet. For this to
 work it is necessary to setup suitable routing and/or open the chosen port number through your router. Artifacts
@@ -46,7 +53,7 @@ can only be downloaded when the runner-download is running and accessible.
 When using OCI Object Storage for the persistant storage medium, it is not necessary to run the service on
 the same host computer where the unmanaged runners are executing. For this type of configuration, the
 runner-download can run anywhere that has access to the OCI Object Storage service and can be accessed as
-described earlier. 
+described earlier.  For OCI to work, you must start the container with the --env-file option pointing to a file containing all the OCI environment variables.  
 
 Execution as a Kubernetes or OKE Service
 ----------------------------------------
@@ -95,7 +102,7 @@ Wercker Operator. The same secrets used to configure the Wercker Operator must b
       spec:
          containers:
          - name: runner-download
-           image: runner-download:test
+           image: iad.ocir.io/odx-pipelines/wercker/runner-download:latest
            ports:
            - containerPort: 8091
            imagePullPolicy: Always
@@ -168,6 +175,4 @@ Wercker Operator. The same secrets used to configure the Wercker Operator must b
     selector:
        app: runner-download
 
-3. Setup network access for the runner-dowkload service. For a single replica this can be easily accomodated by setting up
-   port forwarding. When more than one replica is desired, it is necessary to create an ingress service to send the
-   download recdirect requests into the service. 
+3. Setup network access for the runner-dowkload service. For a single replica this can be easily accomodated by setting up port forwarding. When more than one replica is desired, it is necessary to create an ingress service to send the download recdirect requests into the service. 
