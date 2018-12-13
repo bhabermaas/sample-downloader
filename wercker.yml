@@ -35,13 +35,15 @@ push-runner-download-to-ocir:
         id: oraclelinux
         tag: 7-slim
     steps:
+
     - script:
          name: move runner-download
          code: mv runner-download /runner-download
+
     - internal/docker-push:
          username: $OCI_USERNAME
          password: $OCI_PASSWORD
          repository: iad.ocir.io/odx-pipelines/wercker/runner-download
          registry: https://iad.ocir.io/v2
-         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+         tag: latest, $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
          labels: $WERCKER_GIT_BRANCH
