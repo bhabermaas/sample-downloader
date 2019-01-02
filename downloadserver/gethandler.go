@@ -34,6 +34,9 @@ type DownloadServer struct {
 	Namespace   string
 	BucketName  string
 	Debug       bool
+	// Following are values for HTTP operation
+	CertPemFile string
+	KeyPemFile  string
 }
 
 var downloadServer *DownloadServer
@@ -67,11 +70,19 @@ func (ds *DownloadServer) getOCICredentials() {
 }
 
 // OCIdownloadSErver setsup the http protocol for the GETs
-func OCIdownloadServer(portNumber int) error {
+func (ds *DownloadServer) OCIdownloadServer(portNumber int) error {
 	http.HandleFunc("/", download)
 	port := fmt.Sprintf(":%d", portNumber)
-	if err := http.ListenAndServe(port, nil); err != nil {
-		return err
+
+	if ds.CertPemFile != "" && ds.KeyPemFile != "" {
+		// When both certificate and key are present start the service accepting HTTPS
+		if err := http.ListenAndServeTLS(port, ds.CertPemFile, ds.KeyPemFile, nil); err != nil {
+			return err
+		}
+	} else {
+		if err := http.ListenAndServe(port, nil); err != nil {
+			return err
+		}
 	}
 	return nil
 }
