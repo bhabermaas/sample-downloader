@@ -75,11 +75,13 @@ func (ds *DownloadServer) OCIdownloadServer(portNumber int) error {
 	port := fmt.Sprintf(":%d", portNumber)
 
 	if ds.CertPemFile != "" && ds.KeyPemFile != "" {
+		log.Info("Artifact download server is using HTTPS protocol.")
 		// When both certificate and key are present start the service accepting HTTPS
 		if err := http.ListenAndServeTLS(port, ds.CertPemFile, ds.KeyPemFile, nil); err != nil {
 			return err
 		}
 	} else {
+		log.Info("Artifact Download server is using HTTP protocol")
 		if err := http.ListenAndServe(port, nil); err != nil {
 			return err
 		}
@@ -91,7 +93,7 @@ func (ds *DownloadServer) OCIdownloadServer(portNumber int) error {
 // and do the appropirate processing.
 func download(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/api/v3/operator/artifact/download" {
-		http.Error(w, "404 not found", http.StatusNotFound)
+		http.Error(w, "Download URL is incorrect, 404 not found", http.StatusNotFound)
 		return
 	}
 

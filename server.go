@@ -70,7 +70,10 @@ var serverAction = func(c *cli.Context) error {
 	ds.CertPemFile = o.CertFile
 	ds.KeyPemFile = o.KeyFile
 	log.Info(fmt.Sprintf("Starting artifact download server, listening on port %d", o.Port))
-	ds.OCIdownloadServer(o.Port)
+	err = ds.OCIdownloadServer(o.Port)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return nil
 }
 

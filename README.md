@@ -176,3 +176,6 @@ Wercker Operator. The same secrets used to configure the Wercker Operator must b
        app: runner-download
 
 3. Setup network access for the runner-dowkload service. For a single replica this can be easily accomodated by setting up port forwarding. When more than one replica is desired, it is necessary to create an ingress service to send the download recdirect requests into the service. 
+
+HTTPS Support Setup
+--------------------
