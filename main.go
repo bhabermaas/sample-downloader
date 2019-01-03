@@ -1,4 +1,4 @@
-// Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+// Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
 
 package main
 
@@ -15,7 +15,7 @@ func main() {
 	app := cli.NewApp()
 
 	app.Name = "runner-download"
-	app.Copyright = "Copyright (c) 2018, 2019 cOracle and/or its affiliates. All rights reserved."
+	app.Copyright = "Copyright (c) 2018, 2019 Oracle and/or its affiliates. All rights reserved."
 	app.Usage = "Handle processing of artifact downloads for managed/unmanaged runners"
 
 	app.Version = Version()

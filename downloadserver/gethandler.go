@@ -1,4 +1,4 @@
-// Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+// Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
 
 package downloadserver
 
@@ -34,7 +34,7 @@ type DownloadServer struct {
 	Namespace   string
 	BucketName  string
 	Debug       bool
-	// Following are values for HTTP operation
+	// Following are values for HTTPS operation
 	CertPemFile string
 	KeyPemFile  string
 }
