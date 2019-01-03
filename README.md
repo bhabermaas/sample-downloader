@@ -177,5 +177,35 @@ Wercker Operator. The same secrets used to configure the Wercker Operator must b
 
 3. Setup network access for the runner-dowkload service. For a single replica this can be easily accomodated by setting up port forwarding. When more than one replica is desired, it is necessary to create an ingress service to send the download recdirect requests into the service. 
 
-HTTPS Support Setup
---------------------
+HTTPS Support Operation
+-----------------------
+
+HTTPS support is enabled by two additional arguments on the runner-download command. 
+
+   --certfile= specifies the location of the cert.pem file to be used.
+   --keyfile=  specifies the location of the key.pem file to be used. 
+
+   These files are used initialize HTTPS support and must both be specified. 
+
+   Example:
+
+   docker run -it --rm -p 443:443 iad.ocir.io/odx-pipelines/wercker/runner-download:latest /runner-download --debug server --port=443 --certfile=server.crt --keyfile=server.key
+
+   Certificate and key generation 
+   ------------------------------
+
+   The following openssl commands are used to generate the key and certificate PEM files. 
+
+  - Key considerations for algotithm "RSA" >= 2048-bit
+   
+      openssl genrsa -out server.key 2048
+
+  - Key consideration for algorithm "ECDSA" >= secp384r1
+    List ECDSA for supported curves (openssl ecparam -list curves)
+
+      openssl ecparam -genkey -name secp384r1 -out server.key
+
+  - Generation of self-signed (x509) public key (PEM encodoings .pem | .crt) based on the private (.key)
+
+      openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
+ 
